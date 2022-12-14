@@ -494,10 +494,13 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
                    int runTime) {
     fd_set waitHandles;
 
+    // S.D nvidia-smi not available on current version of Jetpack on the Xavier;
+    //   commenting out all temperature-related functionality.
+    /*
     pid_t tempPid;
     int tempHandle = pollTemp(&tempPid);
     int maxHandle = tempHandle;
-
+    */
     FD_ZERO(&waitHandles);
     FD_SET(tempHandle, &waitHandles);
 
@@ -507,7 +510,7 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
         FD_SET(clientFd.at(i), &waitHandles);
     }
 
-    std::vector<int> clientTemp;
+    //std::vector<int> clientTemp;
     std::vector<int> clientErrors;
     std::vector<int> clientCalcs;
     std::vector<struct timespec> clientUpdateTime;
@@ -517,7 +520,7 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
     time_t startTime = time(0);
 
     for (size_t i = 0; i < clientFd.size(); ++i) {
-        clientTemp.push_back(0);
+        //clientTemp.push_back(0);
         clientErrors.push_back(0);
         clientCalcs.push_back(0);
         struct timespec thisTime;
@@ -572,12 +575,12 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
                 childReport = true;
             }
 
-        if (FD_ISSET(tempHandle, &waitHandles))
-            updateTemps(tempHandle, &clientTemp);
+        // if (FD_ISSET(tempHandle, &waitHandles))
+        //    updateTemps(tempHandle, &clientTemp);
 
         // Resetting the listeners
         FD_ZERO(&waitHandles);
-        FD_SET(tempHandle, &waitHandles);
+        //FD_SET(tempHandle, &waitHandles);
         for (size_t i = 0; i < clientFd.size(); ++i)
             FD_SET(clientFd.at(i), &waitHandles);
 
@@ -606,6 +609,7 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
                 if (i != clientCalcs.size() - 1)
                     printf("- ");
             }
+            /*
             printf("  temps: ");
             for (size_t i = 0; i < clientTemp.size(); ++i) {
                 printf(clientTemp.at(i) != 0 ? "%d C " : "-- ",
@@ -613,6 +617,7 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
                 if (i != clientCalcs.size() - 1)
                     printf("- ");
             }
+            */
 
             fflush(stdout);
 
