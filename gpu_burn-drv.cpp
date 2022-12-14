@@ -508,8 +508,9 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
     int tempHandle = pollTemp(&tempPid);
     int maxHandle = tempHandle;
     */
+    int maxHandle = -1;
     FD_ZERO(&waitHandles);
-    FD_SET(tempHandle, &waitHandles);
+    //FD_SET(tempHandle, &waitHandles);
 
     for (size_t i = 0; i < clientFd.size(); ++i) {
         if (clientFd.at(i) > maxHandle)
@@ -663,9 +664,10 @@ void listenClients(std::vector<int> clientFd, std::vector<pid_t> clientPid,
     for (size_t i = 0; i < clientPid.size(); ++i)
         kill(clientPid.at(i), 15);
 
+    /*
     kill(tempPid, 15);
     close(tempHandle);
-
+    */
     while (wait(NULL) != -1)
         ;
     printf("done\n");
