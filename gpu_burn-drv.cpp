@@ -55,9 +55,6 @@
 #define CUDA_ENABLE_DEPRECATED
 #include <cuda.h>
 
-#include "tools/cpp/runfiles/runfiles.h"
-using bazel::tools::cpp::runfiles::Runfiles;
-
 void checkError(int rCode, std::string desc = "") {
     static std::map<int, std::string> g_errorStrings;
     if (!g_errorStrings.size()) {
@@ -306,11 +303,7 @@ template <class T> class GPU_Test {
     }
 
     void initCompareKernel() {
-        std::string error;
-        std::string argv0;
-        std::unique_ptr<Runfiles> runfiles(Runfiles::Create(argv0, &error));
-
-        const std::string kernelFile = runfiles->Rlocation("x/external/gpu-burn/compare.ptx");
+        const std::string kernelFile = "compare.ptx";
         {
             std::ifstream f(kernelFile.data());
             checkError(f.good() ? CUDA_SUCCESS : CUDA_ERROR_NOT_FOUND,
